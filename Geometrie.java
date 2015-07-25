@@ -15,12 +15,11 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 	
 	Canvas canvas;
 	JPanel southPanel;
-	JButton exit;
+	JButton exit, hide;
 	JToggleButton quadrate;
 	JToggleButton linien;
 	ButtonGroup buttonGroup;
-	boolean clickedLeft;
-	boolean clickedRight;
+	boolean clickedLeft, clickedRight, squaresSelected, hidden;
 	Set <Rectangle2D> recties;
 	
 	private Geometrie() {
@@ -50,26 +49,27 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			
-			g2.setColor(Color.RED);
-			
 			int width = this.getWidth();
 			int height = this.getHeight();
 			
-			if(quadrate.isSelected()){
+			if(quadrate.isSelected() && squaresSelected){
 				g2.drawLine(0, 0, width/2, height);
 				g2.drawLine(0, height, width/2, 0);
 				g2.drawLine(width/2, 0, width, height);
 				g2.drawLine(width/2, height, width, 0);
 			}
 			
-			for(Rectangle2D item : recties ) {
-				if(clickedLeft) {
-					g2.draw(item);
-					g2.fill(item);
-				}
-				else if(clickedRight) {
-					g2.draw(item);
-					g2.fill(item);
+			if(squaresSelected && !hidden){
+				for(Rectangle2D item : recties ) {
+					g2.setColor(Color.RED);
+					if(clickedLeft) {
+						g2.draw(item);
+						g2.fill(item);
+					}
+					else if(clickedRight) {
+						g2.draw(item);
+						g2.fill(item);
+					}
 				}
 			}
 		}
@@ -79,6 +79,8 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 		JPanel panel = new JPanel();		
 		exit = new JButton("Exit");
 		exit.addActionListener(this);
+		hide = new JButton("Hide");
+		hide.addActionListener(this);
 		
 		quadrate = new JToggleButton("Quadrate");
 		linien = new JToggleButton("Linien");
@@ -88,7 +90,10 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 		buttonGroup.add(linien);
 		
 		quadrate.setSelected(true);
+		quadrate.addActionListener(this);
+		linien.addActionListener(this);
 		
+		panel.add(hide);
 		panel.add(quadrate);
 		panel.add(linien);
 		
@@ -116,7 +121,28 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 			}
 			break;
 		case "Quadrate" :
+			squaresSelected = true;
+			System.out.println("Quadrate");
 			canvas.repaint();
+			break;
+		case "Linien" :
+			squaresSelected = false;
+			System.out.println("Linien");
+			recties.clear();
+			canvas.repaint();
+			break;
+		case "Hide" :
+			hidden = true;
+			System.out.println("Hide");
+			hide.setText("Show");
+			canvas.repaint();
+			break;
+		case "Show" :
+			hidden = false;
+			System.out.println("Show");
+			hide.setText("Hide");
+			canvas.repaint();
+			break;
 		}
 		
 	}
@@ -126,19 +152,21 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 		int width = canvas.getWidth();
 		int height = canvas.getHeight();
 		
-		if (e.getX() < canvas.getWidth()/2){
-			clickedLeft = true;
-			clickedRight = false;
-			recties.add(new Rectangle2D.Double(width/8, height/4, width/4, height/2));
-			canvas.repaint();
+		if(squaresSelected) {
+			if (e.getX() < canvas.getWidth()/2){
+				clickedLeft = true;
+				clickedRight = false;
+				recties.add(new Rectangle2D.Double(width/8, height/4, width/4, height/2));
+				canvas.repaint();
+			}
+			else {
+				clickedLeft = false;
+				clickedRight = true;
+				recties.add(new Rectangle2D.Double(width/8*5, height/4, width/4, height/2));
+				canvas.repaint();
+			}
 		}
-		else {
-			clickedLeft = false;
-			clickedRight = true;
-			recties.add(new Rectangle2D.Double(width/8*5, height/4, width/4, height/2));
-			canvas.repaint();
-		}
-		
+			
 		System.out.println(recties.size());
 	}
 

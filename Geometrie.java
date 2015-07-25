@@ -38,6 +38,16 @@ public class Geometrie extends JFrame implements ActionListener {
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
+			
+			if(quadrate.isSelected()){
+				int width = this.getWidth();
+				int height = this.getHeight();
+				
+				g2.drawLine(0, 0, width/2, height);
+				g2.drawLine(0, height, width/2, 0);
+				g2.drawLine(width/2, 0, width, height);
+				g2.drawLine(width/2, height, width, 0);
+			}
 		}
 	}
 	
@@ -81,6 +91,8 @@ public class Geometrie extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 			break;
+		case "Quadrate" :
+			canvas.repaint();
 		}
 		
 	}

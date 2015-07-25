@@ -5,13 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.*;
 
-public class Geometrie extends JFrame implements ActionListener, MouseListener {
+public class Geometrie extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
 	
 	Canvas canvas;
 	JPanel southPanel;
@@ -19,14 +20,16 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 	JToggleButton quadrate;
 	JToggleButton linien;
 	ButtonGroup buttonGroup;
-	boolean clickedLeft, clickedRight, squaresSelected, hidden;
+	boolean clickedLeft, clickedRight, squaresSelected, hidden, linesSelected;
 	Set <Rectangle2D> recties;
+	Point startPoint, endPoint;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
 		
 		canvas = new Canvas();
 		canvas.addMouseListener(this);
+		canvas.addMouseMotionListener(this);
 		this.add(canvas);
 		
 		southPanel = initSouthPanel();
@@ -70,6 +73,16 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 						g2.draw(item);
 						g2.fill(item);
 					}
+				}
+			}
+			
+			if(linesSelected){
+				System.out.println(linesSelected);
+				
+				if(startPoint != null && endPoint != null){
+					System.out.println(startPoint.toString());
+					
+					g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
 				}
 			}
 		}
@@ -121,14 +134,16 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 			}
 			break;
 		case "Quadrate" :
+			hidden = false;
 			squaresSelected = true;
 			System.out.println("Quadrate");
 			canvas.repaint();
 			break;
 		case "Linien" :
+			linesSelected = true;
 			squaresSelected = false;
+			hidden = true;
 			System.out.println("Linien");
-			recties.clear();
 			canvas.repaint();
 			break;
 		case "Hide" :
@@ -171,15 +186,29 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {
+		startPoint = e.getPoint();
+	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {
+		endPoint = e.getPoint();
+		repaint();
+	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {}
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		endPoint = e.getPoint();
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
 
 }

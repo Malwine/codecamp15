@@ -10,6 +10,10 @@ public class Geometrie extends JFrame implements ActionListener {
 	
 	Canvas canvas;
 	JPanel southPanel;
+	JButton exit;
+	JToggleButton quadrate;
+	JToggleButton linien;
+	ButtonGroup buttonGroup;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
@@ -39,19 +43,20 @@ public class Geometrie extends JFrame implements ActionListener {
 	
 	JPanel initSouthPanel() {
 		JPanel panel = new JPanel();		
-		JButton exit = new JButton("Exit");
+		exit = new JButton("Exit");
 		exit.addActionListener(this);
-
-		/*// funktioniert auch:
-		 * exit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int confirm = JOptionPane.showConfirmDialog(Geometrie.this, "Wollen Sie wirklich beenden?", "Exit", JOptionPane.OK_CANCEL_OPTION);
-				if(confirm == JOptionPane.OK_OPTION){
-					System.exit(0);
-				}
-			}
-		});*/
+		
+		quadrate = new JToggleButton("Quadrate");
+		linien = new JToggleButton("Linien");
+		
+		buttonGroup = new ButtonGroup();
+		buttonGroup.add(quadrate);
+		buttonGroup.add(linien);
+		
+		quadrate.setSelected(true);
+		
+		panel.add(quadrate);
+		panel.add(linien);
 		
 		panel.add(exit);
 		return panel;

@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Rectangle2D;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -18,6 +21,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 	ButtonGroup buttonGroup;
 	boolean clickedLeft;
 	boolean clickedRight;
+	Set <Rectangle2D> recties;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
@@ -28,6 +32,8 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 		
 		southPanel = initSouthPanel();
 		this.add(southPanel, BorderLayout.SOUTH);
+		
+		recties = new HashSet<Rectangle2D>();
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(600, 400);
@@ -56,13 +62,15 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 				g2.drawLine(width/2, height, width, 0);
 			}
 			
-			if(clickedLeft) {
-				g2.drawRect(width/8, height/4, width/4, height/2);
-				g2.fillRect(width/8, height/4, width/4, height/2);
-			}
-			else if(clickedRight) {
-				g2.drawRect(width/8*5, height/4, width/4, height/2);
-				g2.fillRect(width/8*5, height/4, width/4, height/2);
+			for(Rectangle2D item : recties ) {
+				if(clickedLeft) {
+					g2.draw(item);
+					g2.fill(item);
+				}
+				else if(clickedRight) {
+					g2.draw(item);
+					g2.fill(item);
+				}
 			}
 		}
 	}
@@ -115,16 +123,23 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		
 		if (e.getX() < canvas.getWidth()/2){
 			clickedLeft = true;
 			clickedRight = false;
+			recties.add(new Rectangle2D.Double(width/8, height/4, width/4, height/2));
 			canvas.repaint();
 		}
 		else {
 			clickedLeft = false;
 			clickedRight = true;
+			recties.add(new Rectangle2D.Double(width/8*5, height/4, width/4, height/2));
 			canvas.repaint();
 		}
+		
+		System.out.println(recties.size());
 	}
 
 	@Override

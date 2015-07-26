@@ -6,7 +6,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.swing.*;
 
@@ -16,6 +20,8 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	JPanel southPanel;
 	Point startPoint, endPoint;
 	LinkedList<Line> linien;
+	HashMap<LinkedList, Color> linienZuege;
+	Random r = new Random();
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
@@ -26,6 +32,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 		this.add(canvas);
 		
 		linien = new LinkedList<>();
+		linienZuege = new HashMap<>();
 		
 		southPanel = initSouthPanel();
 		this.add(southPanel, BorderLayout.SOUTH);
@@ -35,7 +42,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 		this.setVisible(true);
 	}
 	
-	class Canvas extends JPanel {
+	class Canvas<E> extends JPanel {
 		
 		Canvas() {
 			this.setBackground(Color.WHITE);
@@ -46,13 +53,26 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 			Graphics2D g2 = (Graphics2D) g;
 			
 			if (startPoint != null && endPoint != null){
-				System.out.println("Linie zeichnen");
-				g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+				//g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
 				
 				if (linien.size() != 0){
 					for( Line line : linien){
 						g2.drawLine(line.x1, line.y1, line.x2, line.y2);
+						System.out.println("StartPoint: " + line.startPoint.toString());
+						System.out.println("EndPoint: " + line.endPoint.toString());
 					}
+				}System.out.println("------------------------------");
+			}
+			
+			if (linienZuege.size() != 0){
+				for(Entry<LinkedList, Color> entry : linienZuege.entrySet()){
+				    LinkedList<Line> list = entry.getKey();
+				    Color c = entry.getValue();
+				   
+				    for (Line item : list){
+				    	g2.drawLine(item.x1, item.y1, item.x2, item.y2);
+				    	g2.setColor(c);
+				    }
 				}
 			}
 		}
@@ -93,13 +113,26 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		startPoint = e.getPoint();
+		
+		if (e.getClickCount() == 2 && !e.isConsumed()) {
+			 e.consume();
+		     linien.add(new Line(endPoint, linien.getFirst().startPoint));
+		     linienZuege.put(linien, new Color(r.nextInt(255),r.nextInt(255),r.nextInt(255)));
+		     linien.clear();
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {
+		endPoint = e.getPoint();
+		if (startPoint != null && endPoint != null){
+			linien.add(new Line(startPoint, endPoint));
+			canvas.repaint();
+		}
+	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {}
@@ -108,17 +141,16 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	public void mouseExited(MouseEvent e) {}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
-		endPoint = e.getPoint();
-		canvas.repaint();
-	}
+	public void mouseDragged(MouseEvent e) {}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		endPoint = e.getPoint();
+		//endPoint = e.getPoint();
 		
-		linien.add(new Line(startPoint, endPoint));
-		canvas.repaint();
+		/*if (startPoint != null && endPoint != null){
+			linien.add(new Line(startPoint, endPoint));
+			canvas.repaint();
+		}*/
 	}
 
 }

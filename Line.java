@@ -13,6 +13,6 @@ public class Line {
 		this.x1 = sPoint.x;
 		this.y1 = sPoint.y;
 		this.x2 = ePoint.x;
-		this.x2 = ePoint.y;
+		this.y2 = ePoint.y;
 	}
 }

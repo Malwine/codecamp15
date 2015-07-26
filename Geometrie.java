@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.*;
@@ -23,6 +24,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	boolean clickedLeft, clickedRight, squaresSelected, hidden, linesSelected;
 	Set <Rectangle2D> recties;
 	Point startPoint, endPoint;
+	LinkedList <Line> lines;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
@@ -36,6 +38,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 		this.add(southPanel, BorderLayout.SOUTH);
 		
 		recties = new HashSet<Rectangle2D>();
+		lines = new LinkedList<>();
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(600, 400);
@@ -77,12 +80,12 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 			}
 			
 			if(linesSelected){
-				System.out.println(linesSelected);
 				
 				if(startPoint != null && endPoint != null){
-					System.out.println(startPoint.toString());
 					
-					g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+					for(Line item : lines){
+						g2.drawLine(item.x1, item.y1, item.x2, item.y2);
+					}
 				}
 			}
 		}
@@ -188,11 +191,14 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		startPoint = e.getPoint();
+		System.out.println(startPoint.toString());
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		endPoint = e.getPoint();
+		System.out.println(endPoint.toString());
+		lines.add(new Line(startPoint, endPoint));
 		repaint();
 	}
 

@@ -13,11 +13,14 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	
 	Canvas canvas;
 	JPanel southPanel;
+	Point startPoint, endPoint;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
 		
 		canvas = new Canvas();
+		canvas.addMouseListener(this);
+		canvas.addMouseMotionListener(this);
 		this.add(canvas);
 		
 		southPanel = initSouthPanel();
@@ -37,6 +40,11 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
+			
+			if (startPoint != null && endPoint != null){
+				System.out.println("Linie zeichnen");
+				g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+			}
 		}
 	}
 	
@@ -74,44 +82,31 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		startPoint = e.getPoint();
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent e) {}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseReleased(MouseEvent e) {}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		endPoint = e.getPoint();
+		canvas.repaint();
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		endPoint = e.getPoint();
+		canvas.repaint();
 	}
 
 }

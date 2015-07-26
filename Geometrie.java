@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.LinkedList;
 
 import javax.swing.*;
 
@@ -14,6 +15,7 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	Canvas canvas;
 	JPanel southPanel;
 	Point startPoint, endPoint;
+	LinkedList<Line> linien;
 	
 	private Geometrie() {
 		super("Objekte zeichnen");
@@ -22,6 +24,8 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		this.add(canvas);
+		
+		linien = new LinkedList<>();
 		
 		southPanel = initSouthPanel();
 		this.add(southPanel, BorderLayout.SOUTH);
@@ -44,6 +48,12 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 			if (startPoint != null && endPoint != null){
 				System.out.println("Linie zeichnen");
 				g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+				
+				if (linien.size() != 0){
+					for( Line line : linien){
+						g2.drawLine(line.x1, line.y1, line.x2, line.y2);
+					}
+				}
 			}
 		}
 	}
@@ -106,6 +116,8 @@ public class Geometrie extends JFrame implements ActionListener, MouseListener, 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		endPoint = e.getPoint();
+		
+		linien.add(new Line(startPoint, endPoint));
 		canvas.repaint();
 	}
 
